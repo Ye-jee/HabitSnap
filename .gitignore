@@ -1,0 +1,40 @@
+# Build outputs
+/build/
+!build.gradle
+!settings.gradle
+
+# Gradle cache
+.gradle/
+
+# IntelliJ / JetBrains
+/.idea/
+/out/
+/*.iml
+
+# OS junk
+.DS_Store
+Thumbs.db
+
+# Logs & temp
+*.log
+/tmp/
+
+# STS / Eclipse
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+bin/
+
+# Local env & secrets
+src/main/resources/application.yml
+src/main/resources/application-*.yml
+
+# Keep only example configs
+!src/main/resources/application-example.yml
+
+# VSCode
+.vscode/

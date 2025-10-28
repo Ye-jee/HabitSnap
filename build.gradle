@@ -1,0 +1,43 @@
+plugins {
+	id 'java'
+	id 'org.springframework.boot' version '3.5.7'
+	id 'io.spring.dependency-management' version '1.1.7'
+}
+
+group = 'com.habitsnap'
+version = '0.0.1-SNAPSHOT'
+
+java {
+	sourceCompatibility = '17'   // 또는 '21' 사용 가능
+}
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	// ✅ Spring Boot 기본 웹 및 DB
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	implementation 'org.springframework.boot:spring-boot-starter-security'
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
+	runtimeOnly 'com.mysql:mysql-connector-j'   // ✅ 수정된 부분
+
+	// ✅ Swagger(OpenAPI) - API 문서 자동화
+	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.6.0'
+
+	// ✅ Lombok (보일러플레이트 제거)
+	compileOnly 'org.projectlombok:lombok'
+	annotationProcessor 'org.projectlombok:lombok'
+
+	// ✅ 개발 편의성 - DevTools (자동 리로드 등)
+	developmentOnly 'org.springframework.boot:spring-boot-devtools'
+
+	// ✅ 테스트 환경
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+tasks.named('test') {
+	useJUnitPlatform()
+}
