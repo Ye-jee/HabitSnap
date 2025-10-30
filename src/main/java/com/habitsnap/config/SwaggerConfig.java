@@ -24,10 +24,10 @@ public class SwaggerConfig {
                         .version("v1.0.0")
                         .contact(new Contact()
                                 .name("Developed by Yeji An")
-                                .url("https://github.com/habitsnap"))
+                                .url("https://github.com/Ye-jee/HabitSnap"))
                         .license(new License()
                                 .name("All rights reserved")
-                                .url("https://github.com/habitsnap"))
+                                .url("https://github.com/Ye-jee/HabitSnap"))
                 );
 
 
