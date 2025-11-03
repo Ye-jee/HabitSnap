@@ -36,6 +36,9 @@ dependencies {
 	// ✅ 테스트 환경
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+	// ✅ AssertJ 최신 버전 (기본 포함된 3.24.x 대신 이 버전이 우선 적용됨)
+	testImplementation 'org.assertj:assertj-core:3.26.3'
 }
 
 tasks.named('test') {
