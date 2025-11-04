@@ -1,6 +1,7 @@
 package com.habitsnap.api;
 
 import com.habitsnap.application.HelloService;
+import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -9,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 // 샘플 컨트롤러
 @Tag(name = "Hello", description = "Swagger 연결 테스트용 API")
 
+@Hidden
 @RestController
 @RequestMapping("/api/hello")
 @RequiredArgsConstructor
