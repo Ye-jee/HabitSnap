@@ -39,6 +39,12 @@ dependencies {
 
 	// ✅ AssertJ 최신 버전 (기본 포함된 3.24.x 대신 이 버전이 우선 적용됨)
 	testImplementation 'org.assertj:assertj-core:3.26.3'
+
+	// 🔐 JWT (io.jsonwebtoken)
+	implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
+	runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.5'
+	runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.5' // JSON 파싱을 위한 Jackson 기반 모듈
+
 }
 
 tasks.named('test') {
