@@ -19,7 +19,18 @@ public enum ErrorCode {
 
     // 로그인 관련 예외 코드
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, "등록되지 않은 이메일입니다."),
-    INVALID_PASSWORD(HttpStatus.UNAUTHORIZED, "비밀번호가 일치하지 않습니다.");
+    INVALID_PASSWORD(HttpStatus.UNAUTHORIZED, "비밀번호가 일치하지 않습니다."),
+
+    // JWT 관련 에러 코드
+    MISSING_TOKEN(HttpStatus.UNAUTHORIZED, "Authorization 헤더가 존재하지 않습니다."),
+    INVALID_AUTH_HEADER(HttpStatus.UNAUTHORIZED, "Authorization 헤더 형식이 잘못되었습니다."),
+    EXPIRED_TOKEN(HttpStatus.UNAUTHORIZED, "만료된 토큰입니다."),
+    INVALID_SIGNATURE(HttpStatus.UNAUTHORIZED, "유효하지 않은 서명입니다."),
+    UNSUPPORTED_TOKEN(HttpStatus.UNAUTHORIZED, "지원되지 않는 토큰 형식입니다."),
+    MALFORMED_TOKEN(HttpStatus.UNAUTHORIZED, "잘못된 토큰 구조입니다."),
+    INVALID_TOKEN(HttpStatus.UNAUTHORIZED, "유효하지 않은 토큰입니다.");
+
+
 
 
     private final HttpStatus status;    // 실제 상태 코드 (400, 404, 500 등)
