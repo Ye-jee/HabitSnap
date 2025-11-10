@@ -57,10 +57,11 @@ public class JwtTokenProvider {
                     .build()
                     .parseClaimsJws(token);
 
-            return true;
+            return true;        // 검증 성공 시 true
 
         } catch (ExpiredJwtException e) {
             log.warn("JWT 만료 : {}", e.getMessage());
+            throw e;    // 만료 예외는 그대로 던져서 필터에서 처리
         }catch (UnsupportedJwtException e) {
             log.warn("지원하지 않는 JWT 형식 : {}", e.getMessage());
         }catch (MalformedJwtException e) {
@@ -71,7 +72,7 @@ public class JwtTokenProvider {
             log.warn("JWT 토큰 값이 비어 있거나 잘못됨 : {}", e.getMessage());
         }
 
-        return false;
+        return false;   // 만료 외의 경우는 false 반환
     }
 
 
