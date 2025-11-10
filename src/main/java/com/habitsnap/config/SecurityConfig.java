@@ -35,6 +35,7 @@ public class SecurityConfig {
                         /*.anyRequest().permitAll()   // 모든 요청 허용*/
                         .requestMatchers(
                                 "/api/auth/**",     // 로그인/회원가입
+                                "/api/upload/**",            // 업로드 테스트용
                                 "/swagger-ui/**",
                                 "/v3/api-docs/**",
                                 "/api/test/**"              // 테스트용 엔드포인트
