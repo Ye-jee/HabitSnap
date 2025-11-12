@@ -2,6 +2,7 @@ package com.habitsnap.api;
 
 import com.habitsnap.application.FileStorageService;
 import com.habitsnap.application.LocalFileStorageService;
+import com.habitsnap.application.photo.PhotoUploadService;
 import com.habitsnap.dto.MealUploadResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -14,15 +15,20 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.http.MediaType;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/upload")
 @RequiredArgsConstructor
 public class FileUploadController {
 
-    private final LocalFileStorageService fileStorageService;
+    private final PhotoUploadService photoUploadService;
 
-    @PostMapping(value = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    // private final LocalFileStorageService fileStorageService;
+
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<MealUploadResponse> uploadFile(@RequestParam("file") MultipartFile file) {
-        MealUploadResponse response = fileStorageService.saveFile(file);
+
+        MealUploadResponse response = photoUploadService.uploadAndExtract(file);
+        // MealUploadResponse response = fileStorageService.saveFile(file);
+
         return ResponseEntity.ok(response);
 
         /*String fileName = fileStorageService.saveFile(file);
