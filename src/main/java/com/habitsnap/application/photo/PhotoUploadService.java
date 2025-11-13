@@ -1,5 +1,6 @@
 package com.habitsnap.application.photo;
 
+import com.habitsnap.application.FileStorageService;
 import com.habitsnap.application.LocalFileStorageService;
 import com.habitsnap.dto.MealUploadResponse;
 import lombok.RequiredArgsConstructor;
@@ -15,7 +16,8 @@ import org.springframework.web.multipart.MultipartFile;
 @RequiredArgsConstructor
 public class PhotoUploadService {
 
-    private final LocalFileStorageService fileStorageService;
+    // private final LocalFileStorageService fileStorageService;
+    private final FileStorageService fileStorageService;
 
     /* 파일을 저장하고 EXIF 메타데이터를 분석해 결과를 반환함
      @param file > 업로드된 이미지 파일

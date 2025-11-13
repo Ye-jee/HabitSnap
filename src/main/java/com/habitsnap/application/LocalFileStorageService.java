@@ -5,6 +5,7 @@ import com.habitsnap.util.ExifMetadataExtractor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cglib.core.Local;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -16,6 +17,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
+@Profile("local")
 @Slf4j
 @Service
 public class LocalFileStorageService implements FileStorageService{
@@ -27,6 +29,7 @@ public class LocalFileStorageService implements FileStorageService{
     @Override
     public MealUploadResponse saveFile(MultipartFile file) {
 
+        // 파일명 가져옴
         String fileName = file.getOriginalFilename();
 
         // 1) 프로젝트 루트 기준으로 업로드 디렉터리 uploads 경로 생성
@@ -58,9 +61,12 @@ public class LocalFileStorageService implements FileStorageService{
                 log.info("EXIF 촬영 시각 정보 없음 -> 업로드 시각으로 대체, mealDate: {}, mealTime: {}", mealDate, mealTime);
             }
 
-            // 7) DTO로 응답 반환
+            // 7) fileName -> imageUrl로 변경
+            String imageUrl = filePath.toAbsolutePath().toString();
+
+            // 응답 DTO(MealUploadResponse) 반환
             return MealUploadResponse.builder()
-                    .fileName(fileName)
+                    .imageUrl(imageUrl)         // 변경된 부분
                     .mealDate(mealDate)
                     .mealTime(mealTime)
                     .build();
