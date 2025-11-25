@@ -22,7 +22,7 @@ public class AuthController {
 
     private final AuthService authService;
 
-    @Operation(summary = "회원가입 API", description = "이메일, 비밀번호, 닉네임을 입력받아 회워가입을 처리함")
+    @Operation(summary = "회원가입 API", description = "이메일, 비밀번호, 닉네임을 입력받아 회원가입을 처리함")
     @PostMapping("/signup")
     public ResponseEntity<String> signup(@Valid @RequestBody SignUpRequest request){
         authService.singUp(request);

@@ -28,8 +28,10 @@ public enum ErrorCode {
     INVALID_SIGNATURE(HttpStatus.UNAUTHORIZED, "유효하지 않은 서명입니다."),
     UNSUPPORTED_TOKEN(HttpStatus.UNAUTHORIZED, "지원되지 않는 토큰 형식입니다."),
     MALFORMED_TOKEN(HttpStatus.UNAUTHORIZED, "잘못된 토큰 구조입니다."),
-    INVALID_TOKEN(HttpStatus.UNAUTHORIZED, "유효하지 않은 토큰입니다.");
+    INVALID_TOKEN(HttpStatus.UNAUTHORIZED, "유효하지 않은 토큰입니다."),
 
+    // 식사기록 관련 에러 코드
+    MEAL_NOT_FOUND(HttpStatus.NOT_FOUND, "식사 기록을 찾을 수 없습니다.");
 
 
 
