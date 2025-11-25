@@ -3,10 +3,7 @@ package com.habitsnap.domain.mealrecord.entity;
 import com.habitsnap.domain.mealrecord.enums.MealType;
 import com.habitsnap.domain.mealrecord.enums.Portion;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDate;
@@ -17,6 +14,7 @@ import java.time.LocalTime;
 @Table(name = "meal_record", indexes = {
         @Index(name = "idx_user_date", columnList = "user_id, meal_date")})
 @Getter
+@Setter     // 지금은 개발용(테스트)으로 추가하고, 나중에 제거하고 엔티티 내부에 update 통합 메서드 추가 예정
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class MealRecord {
 
@@ -78,7 +76,8 @@ public class MealRecord {
                       String protein,
                       String fat,
                       String notes,
-                      String photoUrl){
+                      String photoUrl,
+                      LocalDateTime createdAt){
 
         this.userId = userId;
         this.mealType = mealType;
@@ -92,7 +91,22 @@ public class MealRecord {
         this.fat = fat;
         this.notes = notes;
         this.photoUrl = photoUrl;
+        this.createdAt = createdAt;
     }
+
+    // update 통합 메서드
+    /*public void update(MealRecordUpdateRequest request) {
+        if (request.getMealType() != null) this.mealType = request.getMealType();
+        if (request.getMealName() != null) this.mealName = request.getMealName();
+        if (request.getMealTime() != null) this.mealTime = request.getMealTime();
+        if (request.getPortion() != null) this.portion = request.getPortion();
+        if (request.getFullnessLevel() != null) this.fullnessLevel = request.getFullnessLevel();
+        if (request.getCarb() != null) this.carb = request.getCarb();
+        if (request.getProtein() != null) this.protein = request.getProtein();
+        if (request.getFat() != null) this.fat = request.getFat();
+        if (request.getNotes() != null) this.notes = request.getNotes();
+    }*/
+
 
 
 }

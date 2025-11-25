@@ -3,6 +3,8 @@ package com.habitsnap.config;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.habitsnap.domain.user.User;
+import com.habitsnap.domain.user.UserRepository;
 import com.habitsnap.exception.ApiErrorResponse;
 import com.habitsnap.exception.ErrorCode;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -20,15 +22,14 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import org.springframework.security.core.userdetails.User;
-
 import java.io.IOException;
 import java.rmi.server.ExportException;
 import java.util.Collections;
 
-/* JWT 인증 필터
-    - 매 요청마다 Authorization 헤더의 JWT를 검증
-    - 유효하면 SecurityContext에 인증 정보 등록
+/* JWT 인증 필터 (CustomUserDetails 기반)
+* - Authorization 헤더에서 JWT 토큰을 추출하고
+* - 유효하면 UserRepository에서 사용자 정보를 조회하여
+* - SecurityContext에 CustomUserDetails 등록
 * */
 @Slf4j
 @Component
@@ -36,6 +37,7 @@ import java.util.Collections;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtTokenProvider jwtTokenProvider;
+    private final UserRepository userRepository;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
@@ -51,21 +53,34 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
 
         // 1) 토큰 주출
-        String token = authHeader.substring(7);
+        String token = authHeader.substring(7);      // “Bearer “ 제거
         log.debug("Authorization 헤더 파싱 성공 : {}", token);
 
         try {
             // 2) 토큰 검증
             if(jwtTokenProvider.validateToken(token)) {
                 String email = jwtTokenProvider.getEmailFromToken(token);
-                log.debug("JWT 검증 성공 - 사용자 : {}", email);
+                log.debug("JWT 검증 성공 - 사용자 이메일: {}", email);
 
-                // 3) SecurityContextHolder에 인증 정보 등록
-                UsernamePasswordAuthenticationToken  authenticationToken = new UsernamePasswordAuthenticationToken(
+                // 3) SecurityContextHolder에 인증 정보 등록 <- *이 부분 수정*
+                // 3-1) UserRepository를 이용해 사용자 조회
+                User user = userRepository.findByEmail(email)
+                        .orElseThrow(()-> new RuntimeException("해당 이메일의 사용자를 찾을 수 없습니다."));
+
+                // 3-2) CustomUserDetails 생성
+                CustomUserDetails customUserDetails = new CustomUserDetails(user);
+
+                // 3-3) 인증 객체 생성 및 SecurityContext 등록
+                UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
+                        customUserDetails,
+                        null,
+                        customUserDetails.getAuthorities()
+                );
+                /*UsernamePasswordAuthenticationToken  authenticationToken = new UsernamePasswordAuthenticationToken(
                         new User(email, "", Collections.emptyList()), // 단순 유저 객체
                         null,
                         Collections.emptyList()
-                );
+                );*/
 
                 authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authenticationToken);
@@ -87,6 +102,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             handleJwtException(response, ErrorCode.INVALID_TOKEN, e);
             return;
         }
+
+
+        // SecurityContext에 저장된 인증 정보 확인 로그 (디버깅용)
+        if (SecurityContextHolder.getContext().getAuthentication() != null) {
+            Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            log.info("[JWT 필터] SecurityContext 인증 주체 타입: {}", principal.getClass().getSimpleName());
+            log.info("[JWT 필터] SecurityContext 인증 주체 내용: {}", principal);
+        }
+
 
         // 4) 다음 필터로 요청 전달 - 정상 토큰이거나 비인증 요청이면 다음 필터로 진행
         filterChain.doFilter(request, response);

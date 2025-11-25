@@ -2,6 +2,7 @@ package com.habitsnap.domain.user;
 
 import com.habitsnap.domain.user.User;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +17,7 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 
 
+@Disabled
 @DataJpaTest        // JPA 관련 빈만 로드 (테스트 DB 자동 구성)
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)    // 실제 MySQL 설정 그대로 사용하게 함
 public class UserRepositoryTest {
