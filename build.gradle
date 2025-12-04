@@ -37,6 +37,11 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
+	// 추가 (테스트를 위해)
+	testImplementation 'org.springframework.security:spring-security-test'
+	testImplementation 'org.mockito:mockito-core:5.12.0'
+
+
 	// ✅ AssertJ 최신 버전 (기본 포함된 3.24.x 대신 이 버전이 우선 적용됨)
 	testImplementation 'org.assertj:assertj-core:3.26.3'
 
@@ -50,6 +55,9 @@ dependencies {
 
 	// AWS SDK
 	implementation 'software.amazon.awssdk:s3:2.25.60'
+
+
+
 
 }
 

@@ -18,9 +18,16 @@ public class CustomUserDetails implements UserDetails {
     private final Long userId;      // 사용자 ID
     private final String email;     // 이메일
 
+    // 기존 생성자 (운영용 - 실제 로그인 사용자)
     public CustomUserDetails(User user) {
         this.userId = user.getId();
         this.email = user.getEmail();
+    }
+
+    // 추가 생성자 (테스트용 - Mock 사용자)
+    public CustomUserDetails(Long userId, String email){
+        this.userId = userId;
+        this.email = email;
     }
 
     // 권한 (현재는 단일 ROLE_USER만 사용)

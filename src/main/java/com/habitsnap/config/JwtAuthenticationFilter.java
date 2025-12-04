@@ -3,6 +3,7 @@ package com.habitsnap.config;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.habitsnap.common.response.ApiResponse;
 import com.habitsnap.domain.user.User;
 import com.habitsnap.domain.user.UserRepository;
 import com.habitsnap.exception.ApiErrorResponse;
@@ -120,19 +121,23 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private void handleJwtException(HttpServletResponse response, ErrorCode errorCode, Exception e) throws IOException {
         log.warn("JWT 검증 실패 : {}", e.getMessage());
 
+        // Http 응답 상태 및 타입 지정
         response.setStatus(errorCode.getStatus().value());
         response.setContentType("application/json;charset=UTF-8");
 
-        ApiErrorResponse apiErrorResponse = ApiErrorResponse.builder()
+        /*ApiErrorResponse apiErrorResponse = ApiErrorResponse.builder()
                 .status(errorCode.getStatus().value())
                 .code(errorCode.name())
                 .message(errorCode.getMessage())
-                .build();
+                .build();*/
+
+        // ApiResponse로 실패 응답 생성
+        ApiResponse<Void> errorResponse = ApiResponse.fail(errorCode);
 
         new ObjectMapper()
                 .registerModule(new JavaTimeModule())
                 .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
-                .writeValue(response.getWriter(), apiErrorResponse);
+                .writeValue(response.getWriter(), errorResponse);
     }
 
 }

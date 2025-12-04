@@ -3,7 +3,9 @@ package com.habitsnap.dto.mealrecord;
 import com.habitsnap.domain.mealrecord.enums.MealType;
 import com.habitsnap.domain.mealrecord.enums.Portion;
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.web.multipart.MultipartFile;
 import software.amazon.awssdk.annotations.NotNull;
@@ -13,7 +15,9 @@ import software.amazon.awssdk.annotations.NotNull;
 * */
 @Getter
 @Setter
-@Schema(name = "MealRecordCreateRequest", description = "식사 기록 생성 요청 DTO")
+@Schema(name = "MealRecordCreateRequest", description = "식사 기록 등록 요청 DTO")
+@NoArgsConstructor      // 테스트를 위해 추가
+@AllArgsConstructor
 public class MealRecordCreateRequest {
 
     @NotNull

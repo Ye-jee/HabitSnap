@@ -1,5 +1,6 @@
 package com.habitsnap.exception;
 
+import com.habitsnap.common.response.ApiResponse;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.UnsupportedJwtException;
@@ -13,7 +14,8 @@ import java.security.SignatureException;
 // @RestControllerAdvice 붙여서 전역 예외 처리 담당
 /* HabitSnap 전역 예외 처리 핸들러
  - CustomException 및 JWT 예외를 통합 관리
- - ApiErrorResponse 형식으로 일관된 JSON 응답 반환
+ - 'ApiErrorResponse 형식으로 일관된 JSON 응답 반환'에서
+   'ApiResponse.fail()기반으로 응답 형식 통일'로 변경됨
 */
 @Slf4j
 @RestControllerAdvice
@@ -22,7 +24,7 @@ public class GlobalExceptionHandler {
     // CustomException을 처리하는 핸들러이자 CustomException 잡아서 ApiErrorResponse로 응답 보내는 부분
     /* HabitSnap 전역에서 CustomException 발생 시 ErrorCode 기반으로 통일된 JSON 응답 반환
     * */
-    @ExceptionHandler(CustomException.class)
+    /*@ExceptionHandler(CustomException.class)
     public ResponseEntity<ApiErrorResponse> handleCustomException(CustomException customException){
         ErrorCode errorCode = customException.getErrorCode();
 
@@ -35,6 +37,12 @@ public class GlobalExceptionHandler {
         return ResponseEntity
                 .status(errorCode.getStatus())
                 .body(apiErrorResponse);
-    }
+    }*/
 
+    @ExceptionHandler(CustomException.class)
+    public ResponseEntity<ApiResponse<Void>> handleCustomException(CustomException customException){
+        return ResponseEntity
+                .status(customException.getErrorCode().getStatus())
+                .body(ApiResponse.fail(customException.getErrorCode()));
+    }
 }
