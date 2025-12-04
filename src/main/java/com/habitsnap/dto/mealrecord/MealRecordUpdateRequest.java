@@ -4,7 +4,9 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.habitsnap.domain.mealrecord.enums.MealType;
 import com.habitsnap.domain.mealrecord.enums.Portion;
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import software.amazon.awssdk.annotations.NotNull;
 
@@ -17,6 +19,8 @@ import java.time.LocalTime;
 @Getter
 @Setter
 @Schema(name = "MealRecordUpdateRequest", description = "식사 기록 수정 요청 DTO")
+@NoArgsConstructor      // 테스트를 위해 추가
+@AllArgsConstructor
 public class MealRecordUpdateRequest {
     // MealRecordUpdateRequest에서는 수정할 필드만 null이 아니고, null이 아니면 반영되도록 하기 위해서 기본값을 제거함
 

@@ -112,14 +112,19 @@ public class MealRecordService {
                 .orElseThrow(()-> new CustomException(ErrorCode.MEAL_NOT_FOUND));
 
         // 요청에서 mealType이 null이 아니면, 요청한 mealType으로 값 변경 즉, null이 아닌 필드만 업데이트
-        if(isValid(request.getMealType().toString())) record.setMealType(request.getMealType());
-        if(isValid(request.getMealName())) record.setMealName(request.getMealName());
+        // Enum 타입은 null 먼저 체크
+        if(request.getMealType() != null && isValid(request.getMealType().toString())){
+            record.setMealType(request.getMealType());
+        }
+        if(request.getPortion() != null && isValid(request.getPortion().toString())) {
+            record.setPortion(request.getPortion());
+        }
 
         if(request.getMealTime() != null) record.setMealTime(request.getMealTime());
 
-        if(isValid(request.getPortion().toString())) record.setPortion(request.getPortion());
-
         if(request.getFullnessLevel() != null) record.setFullnessLevel(request.getFullnessLevel());
+
+        if(isValid(request.getMealName())) record.setMealName(request.getMealName());
 
         if(isValid(request.getCarb())) record.setCarb(request.getCarb());
         if(isValid(request.getProtein())) record.setProtein(request.getProtein());
@@ -190,11 +195,11 @@ public class MealRecordService {
                 .carb(record.getCarb())
                 .protein(record.getProtein())
                 .fat(record.getFat())
-                .notes(record.getNotes())           // 빼먹어서 다시 넣음
+                .notes(record.getNotes())
                 .photoUrl(record.getPhotoUrl())
                 .mealDate(record.getMealDate())
                 .mealTime(record.getMealTime())
-                .createAt(record.getCreatedAt())
+                .createdAt(record.getCreatedAt())
                 .build();
     }
 
