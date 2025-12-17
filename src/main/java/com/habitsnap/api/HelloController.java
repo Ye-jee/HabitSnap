@@ -8,7 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 // 샘플 컨트롤러
-@Tag(name = "Hello", description = "Swagger 연결 테스트용 API")
+/*@Tag(name = "Hello", description = "Swagger 연결 테스트용 API")
 
 @Hidden
 @RestController
@@ -34,4 +34,4 @@ public class HelloController {
         return "Hello, HabitSnap!";
     }
 
-}
+}*/

@@ -2,6 +2,7 @@ package com.habitsnap.domain.mealrecord.entity;
 
 import com.habitsnap.domain.mealrecord.enums.MealType;
 import com.habitsnap.domain.mealrecord.enums.Portion;
+import com.habitsnap.domain.user.User;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -22,8 +23,12 @@ public class MealRecord {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "user_id", nullable = false)
-    private Long userId;                // 사용자 id
+    /*@Column(name = "user_id", nullable = false)
+    private Long userId;                // 사용자 id*/
+
+    @ManyToOne(fetch = FetchType.LAZY)                  // 여러 MealRecord가 하나의 User에 속하고, MealRecord 조회 시 User는 필요할 때만 조회 (성능 최적화)
+    @JoinColumn(name = "user_id", nullable = false)     // DB의 FK 컬럼 이름을 지정
+    private User user;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "meal_type", nullable = false, length = 20)
@@ -65,7 +70,8 @@ public class MealRecord {
     private LocalDateTime createdAt;
 
     @Builder
-    public MealRecord(Long userId,
+    public MealRecord(/*Long userId*/
+                      User user,
                       MealType mealType,
                       LocalDate mealDate,
                       LocalTime mealTime,
@@ -79,7 +85,8 @@ public class MealRecord {
                       String photoUrl,
                       LocalDateTime createdAt){
 
-        this.userId = userId;
+        /*this.userId = userId;*/
+        this.user = user;
         this.mealType = mealType;
         this.mealDate = mealDate;
         this.mealTime = mealTime;

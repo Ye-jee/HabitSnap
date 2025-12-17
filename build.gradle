@@ -23,6 +23,11 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
 	runtimeOnly 'com.mysql:mysql-connector-j'   // ✅ 수정된 부분
 
+	// 캐시 적용 - 추상황
+	implementation 'org.springframework.boot:spring-boot-starter-cache'
+	// caffeine 캐시 적용 - 구현체
+	implementation 'com.github.ben-manes.caffeine:caffeine'
+
 	// ✅ Swagger(OpenAPI) - API 문서 자동화
 	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.6.0'
 
@@ -55,6 +60,7 @@ dependencies {
 
 	// AWS SDK
 	implementation 'software.amazon.awssdk:s3:2.25.60'
+
 
 
 

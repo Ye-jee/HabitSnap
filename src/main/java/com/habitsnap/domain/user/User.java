@@ -1,5 +1,6 @@
 package com.habitsnap.domain.user;
 
+import com.habitsnap.domain.mealrecord.entity.MealRecord;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -9,9 +10,11 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
-@Table(name = "users")  // MySQL 예약어 'user' 피하기 위해 복수형 권장
+@Table(name = "users")  // MySQL 예약어 'user' 피하기 위해 복수형 사용
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
@@ -53,6 +56,11 @@ public class User {
     @UpdateTimestamp            // 수정시간 자동기록
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
+
+    // 연관관계 관련 추가
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    private List<MealRecord> mealRecords = new ArrayList<>();
 
     // 비밀번호 변경 로직
     public void updatePassword(String encodedPassword){
