@@ -4,6 +4,8 @@ import com.habitsnap.domain.mealrecord.entity.MealRecord;
 import com.habitsnap.domain.mealrecord.enums.MealType;
 import com.habitsnap.domain.mealrecord.enums.Portion;
 import com.habitsnap.domain.mealrecord.repository.MealRecordRepository;
+import com.habitsnap.domain.user.User;
+import com.habitsnap.domain.user.UserRepository;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -22,16 +24,28 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 @Disabled
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-@Rollback(false)        // 테스트 종류 후에도 데이터가 DB에 남도로 설정
+@Rollback(false)        // 테스트 종류 후에도 데이터가 DB에 남도록 설정
 public class MealRecordRepositoryTest {
 
     @Autowired
     MealRecordRepository mealRecordRepository;
 
+    @Autowired
+    UserRepository userRepository;
+
     @Test
     void insertDummyAndSearchByPeriod() {
 
-        Long userId = 1L;
+        /*Long userId = 1L;*/
+
+        User user = userRepository.save(
+                User.builder()
+                        .email("test@habitsnap.com")
+                        .password("test!1234!")
+                        .nickname("테스트유저")
+                        .build()
+        );
+
         LocalDate startDate = LocalDate.of(2025,11,1);
 
         // 10일치 더미데이터 생성
@@ -39,7 +53,7 @@ public class MealRecordRepositoryTest {
             LocalDate date = startDate.plusDays(i);
 
             MealRecord record = MealRecord.builder()
-                    .userId(userId)
+                    .user(user)
                     .mealDate(date)
                     .mealTime(LocalTime.of(12,0))
                     .mealType(MealType.LUNCH)
@@ -55,7 +69,7 @@ public class MealRecordRepositoryTest {
         LocalDate from = LocalDate.of(2025,11,3);
         LocalDate to = LocalDate.of(2025,11,7);
 
-        List<MealRecord> results = mealRecordRepository.findByUserIdAndMealDateBetween(userId, from, to);
+        List<MealRecord> results = mealRecordRepository.findByUserAndMealDateBetween(user, from, to);
 
         // 콘솔 출력
         System.out.println("\n ========== 기간 조회 결과 ========== ");

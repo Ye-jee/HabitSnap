@@ -4,9 +4,13 @@ import com.habitsnap.application.mealrecord.MealRecordService;
 import com.habitsnap.common.response.ApiResponse;
 import com.habitsnap.config.CustomUserDetails;
 import com.habitsnap.docs.mealrecord.MealRecordApiDocs.*;
+import com.habitsnap.domain.user.User;
+import com.habitsnap.domain.user.UserRepository;
 import com.habitsnap.dto.mealrecord.MealRecordCreateRequest;
 import com.habitsnap.dto.mealrecord.MealRecordResponse;
 import com.habitsnap.dto.mealrecord.MealRecordUpdateRequest;
+import com.habitsnap.exception.CustomException;
+import com.habitsnap.exception.ErrorCode;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -33,6 +37,9 @@ public class MealRecordController {
 
     private final MealRecordService mealRecordService;
 
+    // 연관관계 추가 후
+    private final UserRepository userRepository;
+
     // 1) 식사 기록 등록(사진 포함) - Create / POST 메서드
     /*@Operation(summary = "식사 기록 등록 API",
             description = """
@@ -49,9 +56,14 @@ public class MealRecordController {
             @AuthenticationPrincipal CustomUserDetails userDetails){
             // userId를 직접 받는 대신 토큰을 이용해서 사용자 정보를 받음
 
-        Long userId = userDetails.getUserId();      // JWT 토큰에서 로그인한 사용자 ID 추출
+        // Long userId = userDetails.getUserId();      // JWT 토큰에서 로그인한 사용자 ID 추출
 
-        MealRecordResponse response = mealRecordService.createMealRecordWithPhoto(request, photo, userId);
+        // User 엔티티를 조회
+        User user = userRepository.findByEmail(userDetails.getEmail())
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+
+        // Service로 User 객체 전달
+        MealRecordResponse response = mealRecordService.createMealRecordWithPhoto(request, photo, user);
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)
@@ -82,8 +94,13 @@ public class MealRecordController {
             @AuthenticationPrincipal CustomUserDetails userDetails, // userId를 직접 받는 대신 토큰을 이용해서 사용자 정보를 받음
             @RequestParam("value") LocalDate date
     ){
-        Long userId = userDetails.getUserId();      // JWT 토큰에서 로그인한 사용자 ID 추출
-        List<MealRecordResponse> records = mealRecordService.getMealRecordsByDate(userId, date);
+        // Long userId = userDetails.getUserId();      // JWT 토큰에서 로그인한 사용자 ID 추출
+
+        // User 엔티티를 조회
+        User user = userRepository.findByEmail(userDetails.getEmail())
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+
+        List<MealRecordResponse> records = mealRecordService.getMealRecordsByDate(user, date);
 
         return ResponseEntity.ok(ApiResponse.success(records));
     }
@@ -99,8 +116,13 @@ public class MealRecordController {
             @RequestParam("start") LocalDate start,
             @RequestParam("end") LocalDate end
     ){
-        Long userId = userDetails.getUserId();      // JWT 토큰에서 로그인한 사용자 ID 추출
-        List<MealRecordResponse> records = mealRecordService.getMealRecordsByPeriod(userId, start, end);
+        // Long userId = userDetails.getUserId();      // JWT 토큰에서 로그인한 사용자 ID 추출
+
+        // User 엔티티를 조회
+        User user = userRepository.findByEmail(userDetails.getEmail())
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+
+        List<MealRecordResponse> records = mealRecordService.getMealRecordsByPeriod(user, start, end);
 
         return ResponseEntity.ok(ApiResponse.success(records));
     }

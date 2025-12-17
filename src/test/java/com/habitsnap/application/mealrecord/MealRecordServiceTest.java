@@ -51,6 +51,11 @@ public class MealRecordServiceTest {
                         .nickname("테스트유저")
                         .build()
         );
+
+        // 테스트용 User 엔티티 생성
+
+        // 실제 DB에 저장
+
     }
 
     // ------------------- Create(기록 생성) 이자 EXIF 누락 시 대체 로직 -----------------------
@@ -70,7 +75,7 @@ public class MealRecordServiceTest {
         );
 
         // when - 서비스 호출, 호출 시 내부 로직에서 현재 날짜 및 시각으로 자동 대체
-        MealRecordResponse response = mealRecordService.createMealRecordWithPhoto(request, null, testUser.getId());
+        MealRecordResponse response = mealRecordService.createMealRecordWithPhoto(request, null, testUser);
 
         // then1 - 반환값과 DB 저장 상태를 검증
         assertThat(response.getMealType()).isEqualTo(MealType.BREAKFAST.name());
@@ -96,7 +101,7 @@ public class MealRecordServiceTest {
         //given - DB에 직접 MealRecord 저장
         MealRecord saved_mealrecord = mealRecordRepository.save(
             MealRecord.builder()
-                    .userId(testUser.getId())
+                    .user(testUser)
                     .mealDate(LocalDate.now())
                     .mealTime(LocalTime.of(8,30))
                     .mealType(MealType.BREAKFAST)
@@ -129,7 +134,7 @@ public class MealRecordServiceTest {
         LocalDate targetDate = LocalDate.of(2025, 11, 26);
         mealRecordRepository.save(
                 MealRecord.builder()
-                        .userId(testUser.getId())
+                        .user(testUser)
                         .mealDate(targetDate)
                         .mealTime(LocalTime.of(18,30))
                         .mealType(MealType.DINNER)
@@ -145,7 +150,7 @@ public class MealRecordServiceTest {
         );
 
         // when - getMealRecordsByDate()로 해당 날짜 조회
-        List<MealRecordResponse> results = mealRecordService.getMealRecordsByDate(testUser.getId(), targetDate);
+        List<MealRecordResponse> results = mealRecordService.getMealRecordsByDate(testUser, targetDate);
 
         // then - 정확히 1건 반환 및 데이터 필드 일치 검증
         assertThat(results).hasSize(1);
@@ -163,7 +168,7 @@ public class MealRecordServiceTest {
         // given - start~end 날짜 범위 내 3일치 기록 저장
         mealRecordRepository.save(
                 MealRecord.builder()
-                        .userId(testUser.getId())
+                        .user(testUser)
                         .mealDate(LocalDate.of(2025,11,24))
                         .mealTime(LocalTime.of(8,30))
                         .mealType(MealType.BREAKFAST)
@@ -180,7 +185,7 @@ public class MealRecordServiceTest {
 
         mealRecordRepository.save(
                 MealRecord.builder()
-                        .userId(testUser.getId())
+                        .user(testUser)
                         .mealDate(LocalDate.of(2025,11,25))
                         .mealTime(LocalTime.of(12,30))
                         .mealType(MealType.LUNCH)
@@ -197,7 +202,7 @@ public class MealRecordServiceTest {
 
         mealRecordRepository.save(
                 MealRecord.builder()
-                        .userId(testUser.getId())
+                        .user(testUser)
                         .mealDate(LocalDate.of(2025,11,26))
                         .mealTime(LocalTime.of(19,30))
                         .mealType(MealType.DINNER)
@@ -213,7 +218,7 @@ public class MealRecordServiceTest {
         );
 
         // when - getMealRecordsByPeriod() 호출
-        List<MealRecordResponse> results = mealRecordService.getMealRecordsByPeriod(testUser.getId(), start, end);
+        List<MealRecordResponse> results = mealRecordService.getMealRecordsByPeriod(testUser, start, end);
 
         // then - 3개의 기록이 모두 조회되고, 각 레코드 값들이 예상 값과 일치하는지 검증
         assertThat(results).hasSize(3);
@@ -230,7 +235,7 @@ public class MealRecordServiceTest {
         // given - 기존 데이터 저장 후 수정 요청 DTO 준비
         MealRecord saved_mealrecord = mealRecordRepository.save(
                 MealRecord.builder()
-                        .userId(testUser.getId())
+                        .user(testUser)
                         .mealDate(LocalDate.now())
                         .mealTime(LocalTime.of(8,30))
                         .mealType(MealType.BREAKFAST)
@@ -268,7 +273,7 @@ public class MealRecordServiceTest {
         // given - DB에 1개의 식사기록 저장
         MealRecord saved_mealrecord = mealRecordRepository.save(
                 MealRecord.builder()
-                        .userId(testUser.getId())
+                        .user(testUser)
                         .mealDate(LocalDate.now())
                         .mealTime(LocalTime.of(20,30))
                         .mealType(MealType.DINNER)

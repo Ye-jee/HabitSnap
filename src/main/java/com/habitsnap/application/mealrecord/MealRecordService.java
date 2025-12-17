@@ -3,6 +3,7 @@ package com.habitsnap.application.mealrecord;
 import com.habitsnap.application.photo.PhotoUploadService;
 import com.habitsnap.domain.mealrecord.entity.MealRecord;
 import com.habitsnap.domain.mealrecord.repository.MealRecordRepository;
+import com.habitsnap.domain.user.User;
 import com.habitsnap.dto.MealUploadResponse;
 import com.habitsnap.dto.mealrecord.MealRecordCreateRequest;
 import com.habitsnap.dto.mealrecord.MealRecordResponse;
@@ -10,6 +11,8 @@ import com.habitsnap.dto.mealrecord.MealRecordUpdateRequest;
 import com.habitsnap.exception.CustomException;
 import com.habitsnap.exception.ErrorCode;
 import jakarta.persistence.EntityNotFoundException;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -35,7 +38,8 @@ public class MealRecordService {
     private final PhotoUploadService photoUploadService;
 
     /* 식사 기록 생성 - Create */
-    public MealRecordResponse createMealRecord(MealRecordCreateRequest request, Long userId){
+    @CacheEvict(value = "mealRecords", key = "#user.id")        // 식사기록 생성 시, 특정 사용자(user) 단위로 캐시 무효화 (최신 데이터 반영을 위해)
+    public MealRecordResponse createMealRecord(MealRecordCreateRequest request, User user){
         // EXIF 추출 로직 연동 전까지 임시 기본값 처리
         LocalDate mealDate = LocalDate.now();
         LocalTime mealTime = LocalTime.now();
@@ -49,7 +53,8 @@ public class MealRecordService {
 
 
         MealRecord record = MealRecord.builder()
-                .userId(userId)                     // 로그인 사용자 ID 주입 (컨트롤러쪽에서)
+                /*.userId(userId)*/                     // 로그인 사용자 ID 주입 (컨트롤러쪽에서)
+                .user(user)
                 .mealType(request.getMealType())
                 .mealName(request.getMealName())
                 .portion(request.getPortion())
@@ -69,7 +74,8 @@ public class MealRecordService {
 
 
     /* 식사 기록 생성, 사진파일과 함께 - Create2 */
-    public MealRecordResponse createMealRecordWithPhoto(MealRecordCreateRequest request, MultipartFile photo, Long userId) {
+    @CacheEvict(value = "mealRecords", key = "#user.id")        // 식사기록 생성 시, 특정 사용자(user) 단위로 캐시 무효화 (최신 데이터 반영을 위해)
+    public MealRecordResponse createMealRecordWithPhoto(MealRecordCreateRequest request, MultipartFile photo, User user) {
 
         LocalDate mealDate = LocalDate.now();
         LocalTime mealTime = LocalTime.now();
@@ -85,7 +91,7 @@ public class MealRecordService {
 
         // 2) DB에 저장
         MealRecord record = MealRecord.builder()
-                .userId(userId)                     // 로그인 사용자 ID 주입 (컨트롤러쪽에서)
+                .user(user)                             // user 객체 주입 (컨트롤러쪽에서)
                 .mealType(request.getMealType())
                 .mealName(request.getMealName())
                 .portion(request.getPortion())
@@ -107,6 +113,7 @@ public class MealRecordService {
 
 
     /* 식사 기록 수정 - Update */
+    @CacheEvict(value = "mealRecords", key = "#user.id")        // 식사기록 수정 시, 특정 사용자(user) 단위로 캐시 무효화 (최신 데이터 반영을 위해)
     public MealRecordResponse updateMealRecord(MealRecordUpdateRequest request) {
         MealRecord record = mealRecordRepository.findById(request.getId())
                 .orElseThrow(()-> new CustomException(ErrorCode.MEAL_NOT_FOUND));
@@ -155,8 +162,8 @@ public class MealRecordService {
     * 예) 오늘 먹은 것 보기
     * */
     @Transactional(readOnly = true)
-    public List<MealRecordResponse> getMealRecordsByDate(Long userId, LocalDate date){
-        return mealRecordRepository.findByUserIdAndMealDate(userId, date)
+    public List<MealRecordResponse> getMealRecordsByDate(User user, LocalDate date){
+        return mealRecordRepository.findByUserAndMealDate(user, date)
                 .stream()
                 .map(this::toResponse)
                 .collect(Collectors.toList());
@@ -165,9 +172,10 @@ public class MealRecordService {
     /* 기간(범위) 전체 '식사 기록' 조회 - Read3
     * 예) 이번 주 식단 리포트 조회
     * */
+    @Cacheable(value = "mealRecords", key = "#user.id + ':' + #start + ':' + #end")
     @Transactional(readOnly = true)
-    public List<MealRecordResponse> getMealRecordsByPeriod(Long userId, LocalDate start, LocalDate end){
-        return mealRecordRepository.findByUserIdAndMealDateBetween(userId, start, end)
+    public List<MealRecordResponse> getMealRecordsByPeriod(User user, LocalDate start, LocalDate end){
+        return mealRecordRepository.findByUserAndMealDateBetween(user, start, end)
                 .stream()
                 .map(this::toResponse)
                 .collect(Collectors.toList());
@@ -175,6 +183,7 @@ public class MealRecordService {
 
 
     /* 식사 기록 삭제 - Delete */
+    @CacheEvict(value = "mealRecords", key = "#user.id")        // 식사기록 삭제 시, 특정 사용자(user) 단위로 캐시 무효화 (최신 데이터 반영을 위해)
     public void deleteMealRecord(Long id){
         MealRecord record = mealRecordRepository.findById(id)
                 .orElseThrow(()-> new CustomException(ErrorCode.MEAL_NOT_FOUND));
@@ -187,7 +196,7 @@ public class MealRecordService {
     private MealRecordResponse toResponse(MealRecord record){
         return MealRecordResponse.builder()
                 .id(record.getId())
-                .userId(record.getUserId())
+                .userId(record.getUser().getId())           // 이 부분에서 N+1 쿼리 발생
                 .mealType(record.getMealType() != null ? record.getMealType().name() : null)
                 .mealName(record.getMealName())
                 .portion(record.getPortion() != null ? record.getPortion().name() : null)

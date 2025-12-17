@@ -8,7 +8,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 // 샘플 엔티티
-@Entity
+//@Entity
 @Getter
 @NoArgsConstructor
 public class HelloEntity {

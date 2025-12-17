@@ -22,6 +22,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.security.test.context.support.WithMockUser;
@@ -56,25 +57,38 @@ public class MealRecordControllerTest {
     @MockBean
     private MealRecordService mealRecordService;
 
-    private CustomUserDetails mockUser;
+    // private CustomUserDetails mockUser;
+
+    // 테스트 전역에서 접근할 수 있도록 전역 변수로 선언 (추가)
+    private User mockUserEntity;
 
     @BeforeEach
     void setupSecurityContext(){
         // JWT 인증 모의 유저
         // mockUser = new CustomUserDetails(1L, "test@habitsnap.com");
 
-        User mockUser = User.builder()
+        // User 엔티티를 클래스 필드로 선언해 재사용이 가능하도록 함
+        mockUserEntity = User.builder()
                 .id(1L)
                 .email("test@habitsnap.com")
                 .password("habitsnapPwd")
                 .nickname("테스트유저")
                 .build();
 
-        CustomUserDetails customUserDetails = new CustomUserDetails(mockUser);
+        // CusteomUserDetails로 감싸기 (Spring Security 인증용)
+        CustomUserDetails customUserDetails = new CustomUserDetails(mockUserEntity);
 
-        SecurityContextHolder.getContext().setAuthentication(
+        // SecurityContext에 인증 객체 주입
+        SecurityContext context = SecurityContextHolder.createEmptyContext();   // 새로운 빈(SecurityContext가 없는) 인증 컨텍스트를 하나 생성
+        context.setAuthentication(      // 인증 정보 등록
+                new UsernamePasswordAuthenticationToken(                        // 로그인 완료된 사용자를 만드는 코드
+                    customUserDetails, null, customUserDetails.getAuthorities()
+        ));
+        SecurityContextHolder.setContext(context);  // 최종 등록
+
+        /*SecurityContextHolder.getContext().setAuthentication(
                 new UsernamePasswordAuthenticationToken(customUserDetails, null, customUserDetails.getAuthorities())
-        );
+        );*/
 
     }
 
@@ -111,7 +125,9 @@ public class MealRecordControllerTest {
                 .notes("아침식사 잘 챙김")
                 .build();
 
-        given(mealRecordService.createMealRecordWithPhoto(any(), any(), anyLong()))
+        // 위에서 전역으로 User 객체 생성
+
+        given(mealRecordService.createMealRecordWithPhoto(any(), any(), mockUserEntity))
                 .willReturn(response);
 
 
@@ -166,7 +182,7 @@ public class MealRecordControllerTest {
                 MealRecordResponse.builder().mealType(MealType.DINNER.name()).protein("연어").build()
         );
 
-        given(mealRecordService.getMealRecordsByDate(anyLong(), eq(date)))
+        given(mealRecordService.getMealRecordsByDate(mockUserEntity, eq(date)))
                 .willReturn(responses);
 
         // when & then
@@ -189,7 +205,7 @@ public class MealRecordControllerTest {
                 MealRecordResponse.builder().mealDate(LocalDate.of(2025,11,26)).mealType(MealType.DINNER.name()).build()
         );
 
-        given(mealRecordService.getMealRecordsByPeriod(anyLong(), any(), any()))
+        given(mealRecordService.getMealRecordsByPeriod(mockUserEntity, any(), any()))
                 .willReturn(responses);
 
 
