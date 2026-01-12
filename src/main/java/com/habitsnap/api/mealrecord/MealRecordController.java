@@ -15,6 +15,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -135,11 +136,17 @@ public class MealRecordController {
     @PatchMapping("/{id}")
     public ResponseEntity<ApiResponse<MealRecordResponse>> updateMealRecord(
             @PathVariable Long id,
-            @RequestBody MealRecordUpdateRequest request
+            @RequestBody MealRecordUpdateRequest request,
+            @AuthenticationPrincipal CustomUserDetails userDetails
     ){
         // PathVariable로 받은 id를 request(요청 객체의 id)에 덮어씀
         request.setId(id);
-        MealRecordResponse updated = mealRecordService.updateMealRecord(request);
+
+        // 추가
+        User user = userRepository.findByEmail(userDetails.getEmail())
+                .orElseThrow(()-> new CustomException(ErrorCode.USER_NOT_FOUND));
+
+        MealRecordResponse updated = mealRecordService.updateMealRecord(user, request);
 
         return ResponseEntity.ok(ApiResponse.success("식사 기록 수정 성공", updated));
     }
@@ -151,9 +158,15 @@ public class MealRecordController {
             tags = {"MealRecord"})*/
     @DeleteMealRecordDocs
     @DeleteMapping("/{id}")
-    public ResponseEntity<ApiResponse<Void>> deleteMealRecord(@PathVariable Long id){
+    public ResponseEntity<ApiResponse<Void>> deleteMealRecord(
+            @PathVariable Long id,
+            @AuthenticationPrincipal CustomUserDetails userDetails
+    ){
+        // 추가
+        User user = userRepository.findByEmail(userDetails.getEmail())
+                .orElseThrow(()-> new CustomException(ErrorCode.USER_NOT_FOUND));
 
-        mealRecordService.deleteMealRecord(id);
+        mealRecordService.deleteMealRecord(user, id);
 
         return ResponseEntity.ok(ApiResponse.success("식사 기록 삭제 성공"));
     }

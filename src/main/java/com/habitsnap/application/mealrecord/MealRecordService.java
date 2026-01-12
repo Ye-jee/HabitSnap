@@ -114,7 +114,8 @@ public class MealRecordService {
 
     /* 식사 기록 수정 - Update */
     @CacheEvict(value = "mealRecords", key = "#user.id")        // 식사기록 수정 시, 특정 사용자(user) 단위로 캐시 무효화 (최신 데이터 반영을 위해)
-    public MealRecordResponse updateMealRecord(MealRecordUpdateRequest request) {
+    public MealRecordResponse updateMealRecord(User user, MealRecordUpdateRequest request) {    // User user는 캐시 키용으로만 필요, 지금 로직에서는 user 사용 안 함
+
         MealRecord record = mealRecordRepository.findById(request.getId())
                 .orElseThrow(()-> new CustomException(ErrorCode.MEAL_NOT_FOUND));
 
@@ -184,7 +185,7 @@ public class MealRecordService {
 
     /* 식사 기록 삭제 - Delete */
     @CacheEvict(value = "mealRecords", key = "#user.id")        // 식사기록 삭제 시, 특정 사용자(user) 단위로 캐시 무효화 (최신 데이터 반영을 위해)
-    public void deleteMealRecord(Long id){
+    public void deleteMealRecord(User user, Long id){           // User user는 캐시 키용으로만 필요, 지금 로직에서는 user 사용 안 함
         MealRecord record = mealRecordRepository.findById(id)
                 .orElseThrow(()-> new CustomException(ErrorCode.MEAL_NOT_FOUND));
 
