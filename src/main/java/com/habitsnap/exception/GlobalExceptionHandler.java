@@ -5,11 +5,20 @@ import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.UnsupportedJwtException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.support.DefaultMessageSourceResolvable;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.security.SignatureException;
+import java.time.LocalDateTime;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 // @RestControllerAdvice 붙여서 전역 예외 처리 담당
 /* HabitSnap 전역 예외 처리 핸들러
@@ -44,5 +53,35 @@ public class GlobalExceptionHandler {
         return ResponseEntity
                 .status(customException.getErrorCode().getStatus())
                 .body(ApiResponse.fail(customException.getErrorCode()));
+
     }
+
+
+    // 검증(Validation) 실패 핸들러
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ApiResponse<Map<String, String>>> handleValidation(MethodArgumentNotValidException exception){
+
+        // 필드별 에러 메시지 모음 (원하면 테스트에서 $.data.email 같은 식으로 검증 가능)
+        List<FieldError> errors = exception.getBindingResult().getFieldErrors();
+
+        Map<String, String> fieldErrors = errors.stream()
+                .collect(Collectors.toMap(
+                        FieldError::getField,
+                        FieldError::getDefaultMessage,
+                        (existing, replacement) -> existing,
+                        LinkedHashMap::new
+                ));
+
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(ApiResponse.fail(ErrorCode.INVALID_INPUT_VALUE, fieldErrors));
+
+    }
+
+
+
+
+
+
+
 }

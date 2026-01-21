@@ -121,7 +121,7 @@ public class MealRecordControllerTest {
         );*/
     }
 
-    // 매 요청마다 “로그인한 사용자”를 주입하는 헬퍼
+    // 매 요청마다 "로그인한 사용자"를 주입하는 헬퍼
     private RequestPostProcessor auth(){
         return user(customUserDetails);
     }

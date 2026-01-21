@@ -1,6 +1,7 @@
 package com.habitsnap.api;
 
 import com.habitsnap.application.auth.AuthService;
+import com.habitsnap.common.response.ApiResponse;
 import com.habitsnap.dto.auth.LoginRequest;
 import com.habitsnap.dto.auth.SignUpRequest;
 import io.swagger.v3.oas.annotations.Operation;
@@ -24,16 +25,22 @@ public class AuthController {
 
     @Operation(summary = "회원가입 API", description = "이메일, 비밀번호, 닉네임을 입력받아 회원가입을 처리함")
     @PostMapping("/signup")
-    public ResponseEntity<String> signup(@Valid @RequestBody SignUpRequest request){
-        authService.singUp(request);
-        return ResponseEntity.status(HttpStatus.CREATED).body("회원가입 성공");
+    public ResponseEntity<ApiResponse<Void>> signup(@Valid @RequestBody SignUpRequest request){
+        authService.signUp(request);
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(ApiResponse.success("회원가입 성공"));
     }
 
     @Operation(summary = "로그인 API", description = "이메일과 비밀번호로 로그인 후 JWT 토큰을 발급함")
     @PostMapping("/login")
-    public ResponseEntity<Map<String, String>> login(@Valid @RequestBody LoginRequest request) {
+    public ResponseEntity<ApiResponse<Map<String, String>>> login(@Valid @RequestBody LoginRequest request) {
         String token = authService.login(request);
-        return ResponseEntity.ok(Map.of("accessToken", token));
+
+        Map<String, String> data = Map.of("accessToken", token);
+
+        return ResponseEntity.ok(
+                ApiResponse.success("로그인 성공", data));
     }
 
 }
