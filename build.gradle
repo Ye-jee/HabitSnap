@@ -2,6 +2,8 @@ plugins {
 	id 'java'
 	id 'org.springframework.boot' version '3.3.4'   		// ✅ 다운그레이드 (3.5.7 → 3.3.4)
 	id 'io.spring.dependency-management' version '1.1.6'  	// ✅ 3.3.x에 맞는 안정 버전
+	// JaCoCo 추가
+	id 'jacoco'
 }
 
 group = 'com.habitsnap'
@@ -61,10 +63,46 @@ dependencies {
 	// AWS SDK
 	implementation 'software.amazon.awssdk:s3:2.25.60'
 
+}
 
+jacoco {
+	toolVersion = "0.8.11"
 
 }
 
 tasks.named('test') {
 	useJUnitPlatform()
+	finalizedBy 'jacocoTestReport'   // 테스트 끝나면 리포트 생성
+}
+
+jacocoTestReport {
+	dependsOn test
+	reports {
+		html.required = true
+		xml.required = true
+		csv.required = false
+	}
+
+	afterEvaluate {
+		classDirectories.setFrom(
+			files(classDirectories.files.collect {
+				fileTree(dir: it, excludes: [
+				        // 설정, 인프라
+						"**/config/**",
+
+						// 공통 응답, DTO, 예외
+						"**/common/**", "**/dto/**", "**/exception/**",
+
+						// JPA 엔티티, 리포지토리
+						"**/domain/**",
+
+						// 유틸
+						"**/util/**",
+
+						// 테스트, 샘플 컨트롤러
+						"**/*Hello*", "**/*Test*"
+				])
+			})
+		)
+	}
 }

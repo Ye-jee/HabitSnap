@@ -37,43 +37,8 @@ public class MealRecordService {
 
     private final PhotoUploadService photoUploadService;
 
-    /* 식사 기록 생성 - Create */
-    @CacheEvict(value = "mealRecords", key = "#user.id")        // 식사기록 생성 시, 특정 사용자(user) 단위로 캐시 무효화 (최신 데이터 반영을 위해)
-    public MealRecordResponse createMealRecord(MealRecordCreateRequest request, User user){
-        // EXIF 추출 로직 연동 전까지 임시 기본값 처리
-        LocalDate mealDate = LocalDate.now();
-        LocalTime mealTime = LocalTime.now();
 
-        // 나중에 EXIF 메타데이터 추출할 때 교체할 코드
-        /*LocalDate mealDate = exifMetadata.getDate() != null
-                ? exifMetadata.getDate() : LocalDate.now();
-
-        LocalTime mealTime = exifMetadata.getTime() != null
-                ? exifMetadata.getTime() : LocalTime.now();*/
-
-
-        MealRecord record = MealRecord.builder()
-                /*.userId(userId)*/                     // 로그인 사용자 ID 주입 (컨트롤러쪽에서)
-                .user(user)
-                .mealType(request.getMealType())
-                .mealName(request.getMealName())
-                .portion(request.getPortion())
-                .fullnessLevel(request.getFullnessLevel())
-                .carb(request.getCarb())
-                .protein(request.getProtein())
-                .fat(request.getFat())
-                .notes(request.getNotes())
-                .mealDate(mealDate)                 // 자동으로 현재 날짜
-                .mealTime(mealTime)                 // 자동으로 현재 시간
-                .createdAt(LocalDateTime.now())     // 작성 시간 자동 기록
-                .build();
-
-        mealRecordRepository.save(record);
-        return toResponse(record);
-    }
-
-
-    /* 식사 기록 생성, 사진파일과 함께 - Create2 */
+    /* 식사 기록 생성, 사진 파일과 함께 - Create */
     @CacheEvict(value = "mealRecords", key = "#user.id")        // 식사기록 생성 시, 특정 사용자(user) 단위로 캐시 무효화 (최신 데이터 반영을 위해)
     public MealRecordResponse createMealRecordWithPhoto(MealRecordCreateRequest request, MultipartFile photo, User user) {
 
