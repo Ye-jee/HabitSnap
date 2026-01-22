@@ -21,6 +21,9 @@ public enum ErrorCode {
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, "등록되지 않은 이메일입니다."),
     INVALID_PASSWORD(HttpStatus.UNAUTHORIZED, "비밀번호가 일치하지 않습니다."),
 
+    // 인가(권한) 실패 - 403 <추가>
+    ACCESS_DENIED(HttpStatus.FORBIDDEN, "접근 권한이 없습니다."),
+
     // JWT 관련 에러 코드
     MISSING_TOKEN(HttpStatus.UNAUTHORIZED, "Authorization 헤더가 존재하지 않습니다."),
     INVALID_AUTH_HEADER(HttpStatus.UNAUTHORIZED, "Authorization 헤더 형식이 잘못되었습니다."),
@@ -32,7 +35,6 @@ public enum ErrorCode {
 
     // 식사기록 관련 에러 코드
     MEAL_NOT_FOUND(HttpStatus.NOT_FOUND, "식사 기록을 찾을 수 없습니다.");
-
 
 
     private final HttpStatus status;    // 실제 상태 코드 (400, 404, 500 등)

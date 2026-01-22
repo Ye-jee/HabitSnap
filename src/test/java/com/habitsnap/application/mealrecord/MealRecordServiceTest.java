@@ -27,7 +27,7 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 
-@SpringBootTest
+@SpringBootTest(properties = "spring.cache.type=none")
 @Transactional
 public class MealRecordServiceTest {
 
@@ -256,7 +256,7 @@ public class MealRecordServiceTest {
         updateRequest.setNotes("수정 후 식단");              // 해당 필드만 수정
 
         // when2 - updateMealRecord() 호출
-        MealRecordResponse response = mealRecordService.updateMealRecord(updateRequest);
+        MealRecordResponse response = mealRecordService.updateMealRecord(testUser, updateRequest);
 
         // then - 반환된 응답의 필드가 수정 요청값과 일치하는지 확인
         assertThat(response.getNotes()).isEqualTo("수정 후 식단");               // 변경됨
@@ -289,7 +289,7 @@ public class MealRecordServiceTest {
         );
 
         // when - deleteMealRecord() 호출
-        mealRecordService.deleteMealRecord(saved_mealrecord.getId());
+        mealRecordService.deleteMealRecord(testUser, saved_mealrecord.getId());
 
         // then - 해당 ID로 조회 시, Optional.empty()로 삭제되었는지 확인
         assertThat(mealRecordRepository.findById(saved_mealrecord.getId())).isEmpty();

@@ -17,7 +17,8 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
-@Profile("local")
+//@Profile("local")
+@Profile({"local", "test"})
 @Slf4j
 @Service
 public class LocalFileStorageService implements FileStorageService{

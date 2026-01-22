@@ -24,7 +24,7 @@ public class AuthService {  // 회원가입 로직 + 로그인 로직
     private final JwtTokenProvider jwtTokenProvider;
 
     // 회원가입
-    public void singUp(SignUpRequest request) {
+    public void signUp(SignUpRequest request) {
 
         if(userRepository.existsByEmail(request.getEmail())) {
             throw new CustomException(ErrorCode.DUPLICATE_EMAIL);
