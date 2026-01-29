@@ -26,7 +26,7 @@ public class MealRecordCreateRequest {
 
     @NotNull
     @Schema(description = "식사 이름 (예: 아보카도 닭가슴살 볶음밥)", example = "아보카도 닭가슴살 볶음밥")
-    private String MealName;
+    private String mealName;
 
     @Schema(description = "먹는 양, 선택지: SMALL, HALF, ONE, TWO", example = "ONE")
     private Portion portion;            // enum 적용 - 먹는 양
@@ -44,7 +44,7 @@ public class MealRecordCreateRequest {
     @Schema(description = "식사 메뉴 중 지방에 해당하는 음식", example = "아보카도")
     private String fat;
 
-    @Schema(description = "식사 메뉴에 대한 짧은 기록", example = "요리할 시간이 없어 배달로 건강한 음식을 주문해서 먹음")
+    @Schema(description = "식사 메뉴에 대한 짧은 기록", example = "간단하지만 든든한 식사였음")
     private String notes;               // 식사 메뉴에 대한 짧은 기록
 
 }
