@@ -1,6 +1,5 @@
 package com.habitsnap.common.response;
 
-import com.habitsnap.dto.mealrecord.MealRecordResponse;
 import com.habitsnap.exception.ErrorCode;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
@@ -25,7 +24,7 @@ public class ApiResponse<T> {
     @Schema(description = "응답 메시지", example = "요청이 성공적으로 처리되었습니다.")
     private final String message;       // 메세지 (성공/실패 공용)
 
-    @Schema(description = "에러 코드 (예외 발생 시에만 표시)", example = "MEAL_NOT_FOUND")
+    @Schema(description = "에러 코드 (예외 발생 시에만 표시)"/*, example = "MEAL_NOT_FOUND"*/)
     private String code;                // 에러 코드 (예: MEAL_NOT_FOUND)
 
     @Schema(description = "응답 생성 시각", example = "2025-12-04T14:21:00.000")

@@ -8,8 +8,11 @@ import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.info.License;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
+import io.swagger.v3.oas.models.tags.Tag;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import java.util.List;
 
 /* Swagger (springdoc-openapi) 설정 파일
  - HabitSnap API 문서화
@@ -52,6 +55,11 @@ public class SwaggerConfig {
         return new OpenAPI()
                 .addSecurityItem(new SecurityRequirement().addList("bearerAuth"))   // 보안 요구사항
                 .components(new Components().addSecuritySchemes("bearerAuth", bearerAuth))
+                .tags(List.of(
+                        new Tag().name("Auth").description("회원가입/로그인(인증 및 JWT 발급) API"),
+                        new Tag().name("User").description("JWT 인증 상태 확인 API"),
+                        new Tag().name("MealRecord").description("식사 기록 관리 API")
+                ))
                 .info(apiInfo);
 
     }

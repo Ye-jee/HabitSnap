@@ -7,9 +7,9 @@ import com.habitsnap.domain.mealrecord.enums.MealType;
 import com.habitsnap.domain.mealrecord.enums.Portion;
 import com.habitsnap.domain.user.User;
 import com.habitsnap.domain.user.UserRepository;
-import com.habitsnap.dto.mealrecord.MealRecordCreateRequest;
-import com.habitsnap.dto.mealrecord.MealRecordResponse;
-import com.habitsnap.dto.mealrecord.MealRecordUpdateRequest;
+import com.habitsnap.dto.mealrecord.request.MealRecordCreateRequest;
+import com.habitsnap.dto.mealrecord.response.MealRecordResponse;
+import com.habitsnap.dto.mealrecord.request.MealRecordUpdateRequest;
 import com.habitsnap.exception.CustomException;
 import com.habitsnap.exception.ErrorCode;
 import org.junit.jupiter.api.BeforeEach;
@@ -22,17 +22,11 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.request.RequestPostProcessor;
 import org.springframework.web.multipart.MultipartFile;
 
 
-import java.security.Principal;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
@@ -150,7 +144,8 @@ public class MealRecordControllerTest {
         MealRecordResponse response = MealRecordResponse.builder()
                 .id(1L)
                 .mealDate(LocalDate.now())
-                .mealTime(LocalTime.of(8,30))
+                /*.mealTime(LocalTime.of(8,30))*/
+                .mealTime("08:30:00")
                 .mealType(MealType.BREAKFAST.name())
                 .mealName("닭가슴살 아보카도 덮밥")
                 .carb("잡곡밥")
@@ -197,7 +192,8 @@ public class MealRecordControllerTest {
         MealRecordResponse response = MealRecordResponse.builder()
                 .id(1L)
                 .mealDate(LocalDate.now())
-                .mealTime(LocalTime.of(8,30))
+                /*.mealTime(LocalTime.of(8,30))*/
+                .mealTime("08:30:00")
                 .mealType(MealType.BREAKFAST.name())
                 .mealName("오버나이트 오트밀")
                 .protein("그릭요거트")
@@ -304,6 +300,7 @@ public class MealRecordControllerTest {
         /*given(mealRecordService.updateMealRecord(any())).willReturn(updatedResponse);*/
         given(mealRecordService.updateMealRecord(
                 any(User.class),
+                eq(1L),
                 any(MealRecordUpdateRequest.class)
         )).willReturn(updatedResponse);
 

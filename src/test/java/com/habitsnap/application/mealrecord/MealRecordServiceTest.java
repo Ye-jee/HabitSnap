@@ -6,12 +6,10 @@ import com.habitsnap.domain.mealrecord.enums.Portion;
 import com.habitsnap.domain.mealrecord.repository.MealRecordRepository;
 import com.habitsnap.domain.user.User;
 import com.habitsnap.domain.user.UserRepository;
-import com.habitsnap.dto.mealrecord.MealRecordCreateRequest;
-import com.habitsnap.dto.mealrecord.MealRecordResponse;
-import com.habitsnap.dto.mealrecord.MealRecordUpdateRequest;
+import com.habitsnap.dto.mealrecord.request.MealRecordCreateRequest;
+import com.habitsnap.dto.mealrecord.response.MealRecordResponse;
+import com.habitsnap.dto.mealrecord.request.MealRecordUpdateRequest;
 import com.habitsnap.exception.CustomException;
-import com.habitsnap.exception.ErrorCode;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -252,11 +250,11 @@ public class MealRecordServiceTest {
 
         // when1 - 수정 요청 DTO 생성
         MealRecordUpdateRequest updateRequest = new MealRecordUpdateRequest();
-        updateRequest.setId(saved_mealrecord.getId());
+        // updateRequest.setId(saved_mealrecord.getId());
         updateRequest.setNotes("수정 후 식단");              // 해당 필드만 수정
 
         // when2 - updateMealRecord() 호출
-        MealRecordResponse response = mealRecordService.updateMealRecord(testUser, updateRequest);
+        MealRecordResponse response = mealRecordService.updateMealRecord(testUser, testUser.getId(), updateRequest);
 
         // then - 반환된 응답의 필드가 수정 요청값과 일치하는지 확인
         assertThat(response.getNotes()).isEqualTo("수정 후 식단");               // 변경됨

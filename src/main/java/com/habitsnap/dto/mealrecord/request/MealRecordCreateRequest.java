@@ -1,4 +1,4 @@
-package com.habitsnap.dto.mealrecord;
+package com.habitsnap.dto.mealrecord.request;
 
 import com.habitsnap.domain.mealrecord.enums.MealType;
 import com.habitsnap.domain.mealrecord.enums.Portion;
