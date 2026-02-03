@@ -1,6 +1,6 @@
 package com.habitsnap.application;
 
-import com.habitsnap.dto.MealUploadResponse;
+import com.habitsnap.dto.mealrecord.response.MealUploadResponse;
 import org.springframework.web.multipart.MultipartFile;
 
 public interface FileStorageService {

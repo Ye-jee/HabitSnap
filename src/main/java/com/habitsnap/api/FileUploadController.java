@@ -1,9 +1,8 @@
 package com.habitsnap.api;
 
-import com.habitsnap.application.FileStorageService;
-import com.habitsnap.application.LocalFileStorageService;
 import com.habitsnap.application.photo.PhotoUploadService;
-import com.habitsnap.dto.MealUploadResponse;
+import com.habitsnap.dto.mealrecord.response.MealUploadResponse;
+import io.swagger.v3.oas.annotations.Hidden;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -13,11 +12,11 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import org.springframework.http.MediaType;
-
+@Hidden
 @RestController
 @RequestMapping("/api/upload")
 @RequiredArgsConstructor
-public class FileUploadController {
+public class FileUploadController {     // 파일 업로드 기능 확인
 
     private final PhotoUploadService photoUploadService;
 

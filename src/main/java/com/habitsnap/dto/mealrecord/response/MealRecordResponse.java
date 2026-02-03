@@ -1,5 +1,6 @@
-package com.habitsnap.dto.mealrecord;
+package com.habitsnap.dto.mealrecord.response;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;
@@ -54,8 +55,11 @@ public class MealRecordResponse {
     @Schema(description = "식사 날짜 (yyyy-MM-dd)", example = "2025-12-04")
     private LocalDate mealDate;
 
+    /*@Schema(description = "식사 시각 (HH:mm:ss)", example = "08:30:00")
+    private LocalTime mealTime;*/
     @Schema(description = "식사 시각 (HH:mm:ss)", example = "08:30:00")
-    private LocalTime mealTime;
+    private String mealTime;
+
 
     @Schema(description = "작성 시각", example = "2025-12-04T08:32:15.122")
     private LocalDateTime createdAt;

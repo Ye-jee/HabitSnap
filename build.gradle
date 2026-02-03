@@ -106,3 +106,7 @@ jacocoTestReport {
 		)
 	}
 }
+
+tasks.withType(JavaCompile) {	// 컴파일 시 메서드 파라미터 이름(id 등)을 바이트코드에 보존
+	options.compilerArgs += "-parameters"
+}

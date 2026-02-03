@@ -4,13 +4,12 @@ import com.habitsnap.application.photo.PhotoUploadService;
 import com.habitsnap.domain.mealrecord.entity.MealRecord;
 import com.habitsnap.domain.mealrecord.repository.MealRecordRepository;
 import com.habitsnap.domain.user.User;
-import com.habitsnap.dto.MealUploadResponse;
-import com.habitsnap.dto.mealrecord.MealRecordCreateRequest;
-import com.habitsnap.dto.mealrecord.MealRecordResponse;
-import com.habitsnap.dto.mealrecord.MealRecordUpdateRequest;
+import com.habitsnap.dto.mealrecord.response.MealUploadResponse;
+import com.habitsnap.dto.mealrecord.request.MealRecordCreateRequest;
+import com.habitsnap.dto.mealrecord.response.MealRecordResponse;
+import com.habitsnap.dto.mealrecord.request.MealRecordUpdateRequest;
 import com.habitsnap.exception.CustomException;
 import com.habitsnap.exception.ErrorCode;
-import jakarta.persistence.EntityNotFoundException;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -78,40 +78,32 @@ public class MealRecordService {
 
 
     /* 식사 기록 수정 - Update */
-    @CacheEvict(value = "mealRecords", key = "#user.id")        // 식사기록 수정 시, 특정 사용자(user) 단위로 캐시 무효화 (최신 데이터 반영을 위해)
-    public MealRecordResponse updateMealRecord(User user, MealRecordUpdateRequest request) {    // User user는 캐시 키용으로만 필요, 지금 로직에서는 user 사용 안 함
+    /*@CacheEvict(value = "mealRecords", key = "#user.id")*/        // 식사기록 수정 시, 특정 사용자(user) 단위로 캐시 무효화 (최신 데이터 반영을 위해)
+    @CacheEvict(value = "mealRecords", key = "#p0.id")
+    public MealRecordResponse updateMealRecord(User user, Long mealRecordId, MealRecordUpdateRequest request) {    // User user는 캐시 키용으로만 필요, 지금 로직에서는 user 사용 안 함
 
-        MealRecord record = mealRecordRepository.findById(request.getId())
+        MealRecord record = mealRecordRepository.findById(mealRecordId)
                 .orElseThrow(()-> new CustomException(ErrorCode.MEAL_NOT_FOUND));
 
-        // 요청에서 mealType이 null이 아니면, 요청한 mealType으로 값 변경 즉, null이 아닌 필드만 업데이트
-        // Enum 타입은 null 먼저 체크
-        if(request.getMealType() != null && isValid(request.getMealType().toString())){
-            record.setMealType(request.getMealType());
-        }
-        if(request.getPortion() != null && isValid(request.getPortion().toString())) {
-            record.setPortion(request.getPortion());
-        }
+        // PATCH: null이면 수정 안 함, 값이 있으면 반영
+        if (request.getMealType() != null) record.setMealType(request.getMealType());
+        if (request.getPortion() != null) record.setPortion(request.getPortion());
+        if (request.getMealTime() != null) record.setMealTime(request.getMealTime());
+        if (request.getFullnessLevel() != null) record.setFullnessLevel(request.getFullnessLevel());
 
-        if(request.getMealTime() != null) record.setMealTime(request.getMealTime());
-
-        if(request.getFullnessLevel() != null) record.setFullnessLevel(request.getFullnessLevel());
-
-        if(isValid(request.getMealName())) record.setMealName(request.getMealName());
-
-        if(isValid(request.getCarb())) record.setCarb(request.getCarb());
-        if(isValid(request.getProtein())) record.setProtein(request.getProtein());
-        if(isValid(request.getFat())) record.setFat(request.getFat());
-
-        if(isValid(request.getNotes())) record.setNotes(request.getNotes());
+        if (request.getMealName() != null) record.setMealName(request.getMealName());
+        if (request.getCarb() != null) record.setCarb(request.getCarb());
+        if (request.getProtein() != null) record.setProtein(request.getProtein());
+        if (request.getFat() != null) record.setFat(request.getFat());
+        if (request.getNotes() != null) record.setNotes(request.getNotes());
 
         return toResponse(record);
     }
 
     // 기본값("string") 필터링 메서드
-    private boolean isValid(String value) {
+    /*private boolean isValid(String value) {
         return value != null && !value.equalsIgnoreCase("string") && !value.trim().isEmpty();
-    }
+    }*/
 
 
     /* 단일 '식사 기록' 조회 (사용자 ID 기반) - Read1 */
@@ -161,6 +153,8 @@ public class MealRecordService {
 
     // Entity -> Response DTO  변환 메서드
     private MealRecordResponse toResponse(MealRecord record){
+        DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm:ss");
+
         return MealRecordResponse.builder()
                 .id(record.getId())
                 .userId(record.getUser().getId())           // 이 부분에서 N+1 쿼리 발생
@@ -174,7 +168,7 @@ public class MealRecordService {
                 .notes(record.getNotes())
                 .photoUrl(record.getPhotoUrl())
                 .mealDate(record.getMealDate())
-                .mealTime(record.getMealTime())
+                .mealTime(record.getMealTime() != null ? record.getMealTime().format(TIME_FORMATTER) : null)
                 .createdAt(record.getCreatedAt())
                 .build();
     }
