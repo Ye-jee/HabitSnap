@@ -107,17 +107,17 @@ HabitSnap은 **사용자별·날짜별 식사기록 조회**가 핵심 기능으
 
 
 ### ⚡  해결 과정
-#### 1️⃣ **인덱스 설계 및 검증**
+#### 1) **인덱스 설계 및 검증**
 - `meal_record` 테이블에 **복합 인덱스(`user_id + meal_date`)** 설계 및 적용  
 - `SHOW INDEX`, `EXPLAIN`을 통해 실제 Range Scan 동작 검증  
 - **Full Table Scan → Range Scan** 으로 전환됨을 확인
 
-#### 2️⃣ **N+1 쿼리 제거**
+#### 2) **N+1 쿼리 제거**
 - `MealRecord` ↔ `User` 간 Lazy 로딩으로 인한 **N+1 문제** 발생  
 - `@EntityGraph(attributePaths = "user")` 적용 → **JOIN FETCH 전략**으로 개선  
 - **쿼리 수 6 → 1 (−83%)**, **실행 시간 158ms → 53ms (−66%)**  
 
-#### 3️⃣ **캐시 적용 (Caffeine Cache)**
+#### 3) **캐시 적용 (Caffeine Cache)**
 - 동일 사용자의 주간 리포트 조회 API(`getMealRecordsByPeriod`)에 캐시 도입  
 - `@Cacheable` / `@CacheEvict` 로 캐시 갱신 및 데이터 일관성 유지  
 - **1회차 DB 조회 496ms → 캐시 HIT 시 5ms (약 100배 향상)**  
