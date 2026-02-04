@@ -82,7 +82,6 @@ HabitSnap은 식사 사진과 간단한 정보를 함께 기록하여
 ---
 
 ## 🧠 문제 해결 사례  
-*(문제 → 해결 → 결과)*
 
 ### ⚙️ DB 성능 개선 및 최적화 (Performance Optimization)
 
