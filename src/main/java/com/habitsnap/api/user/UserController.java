@@ -1,5 +1,6 @@
 package com.habitsnap.api.user;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -9,6 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 /* JWT 인증 테스트용 보호 엔드포인트
   - 토큰이 있어야 접근 가능 (@PreAuthorize)
 */
+@Tag(name = "User")
 @RestController
 @RequestMapping("/api/user")
 public class UserController {

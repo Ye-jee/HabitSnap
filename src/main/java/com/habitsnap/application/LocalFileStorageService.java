@@ -1,10 +1,9 @@
 package com.habitsnap.application;
 
-import com.habitsnap.dto.MealUploadResponse;
+import com.habitsnap.dto.mealrecord.response.MealUploadResponse;
 import com.habitsnap.util.ExifMetadataExtractor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cglib.core.Local;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;

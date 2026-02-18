@@ -1,4 +1,4 @@
-package com.habitsnap.dto;
+package com.habitsnap.dto.mealrecord.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

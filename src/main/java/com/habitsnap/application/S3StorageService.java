@@ -1,6 +1,6 @@
 package com.habitsnap.application;
 
-import com.habitsnap.dto.MealUploadResponse;
+import com.habitsnap.dto.mealrecord.response.MealUploadResponse;
 import com.habitsnap.util.ExifMetadataExtractor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

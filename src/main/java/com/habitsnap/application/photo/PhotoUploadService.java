@@ -1,8 +1,7 @@
 package com.habitsnap.application.photo;
 
 import com.habitsnap.application.FileStorageService;
-import com.habitsnap.application.LocalFileStorageService;
-import com.habitsnap.dto.MealUploadResponse;
+import com.habitsnap.dto.mealrecord.response.MealUploadResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
