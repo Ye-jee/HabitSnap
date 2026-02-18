@@ -1,3 +1,5 @@
+<img src="assets/HabitSnap 로고 최종안.png" alt="HabitSnap Header" width="400"/>
+
 # 📸 HabitSnap 🍽️
 **사진 한 장으로 나의 식습관을 기록하다**
 
