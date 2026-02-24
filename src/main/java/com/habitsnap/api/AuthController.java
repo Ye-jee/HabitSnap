@@ -33,7 +33,7 @@ public class AuthController {
         authService.signUp(request);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(ApiResponse.success("회원가입에 성공했습니다."));
+                .body(ApiResponse.success("회원가입에 성공했습니다"));
     }
 
     @AuthApiDocs.LoginDocs

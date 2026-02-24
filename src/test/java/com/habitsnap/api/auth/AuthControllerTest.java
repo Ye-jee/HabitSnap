@@ -60,7 +60,7 @@ public class AuthControllerTest {
                 .andExpect(status().isCreated())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.status").value(200))     // ApiResponse 내부 코드/규칙에 맞게
-                .andExpect(jsonPath("$.message").value("회원가입 성공"));
+                .andExpect(jsonPath("$.message").value("회원가입에 성공했습니다"));
 
         // 회원가입 메서드 signup()이 1번 호출됐는지 검증
         verify(authService, times(1)).signUp(any(SignUpRequest.class));
@@ -116,7 +116,7 @@ public class AuthControllerTest {
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
                 // 컨트롤러가 Map.of("accessToken", token) 반환하므로 JSON path는 $.accessToken
-                .andExpect(jsonPath("$.message").value("로그인 성공"))
+                .andExpect(jsonPath("$.message").value("로그인에 성공했습니다"))
                 .andExpect(jsonPath("$.data.accessToken").value("mock-jwt-token"));
     }
 

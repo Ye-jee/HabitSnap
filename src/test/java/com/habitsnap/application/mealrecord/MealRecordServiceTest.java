@@ -254,13 +254,20 @@ public class MealRecordServiceTest {
         updateRequest.setNotes("수정 후 식단");              // 해당 필드만 수정
 
         // when2 - updateMealRecord() 호출
-        MealRecordResponse response = mealRecordService.updateMealRecord(testUser, testUser.getId(), updateRequest);
+        MealRecordResponse response = mealRecordService.updateMealRecord(testUser, saved_mealrecord.getId(), updateRequest);
 
         // then - 반환된 응답의 필드가 수정 요청값과 일치하는지 확인
         assertThat(response.getNotes()).isEqualTo("수정 후 식단");               // 변경됨
         assertThat(response.getCarb()).isEqualTo("오트밀");                     // 그대로
         assertThat(response.getProtein()).isEqualTo("그릭요거트");               // 그대로
-        assertThat(response.getMealType()).isEqualTo(MealType.BREAKFAST.name());        // 그대로
+        assertThat(response.getMealType()).isEqualTo(MealType.BREAKFAST.name());// 그대로
+
+        // DB 직접 검증
+        MealRecord updated = mealRecordRepository.findById(saved_mealrecord.getId())
+                .orElseThrow();
+
+        assertThat(updated.getCarb()).isEqualTo("오트밀");
+
     }
 
 

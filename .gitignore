@@ -6,7 +6,7 @@
 # Gradle cache
 .gradle/
 
-# IntelliJ / JetBrains
+# IntelliJ / JetBrains (IDE)
 /.idea/
 /out/
 /*.iml
@@ -38,3 +38,9 @@ src/main/resources/application-*.yml
 
 # VSCode
 .vscode/
+
+# 환경 설정 파일(Environment)
+.env
+
+# Docker local override
+docker-compose.override.yml
